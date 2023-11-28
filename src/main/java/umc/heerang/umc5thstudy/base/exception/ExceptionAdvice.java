@@ -16,6 +16,7 @@ import umc.heerang.umc5thstudy.base.code.ErrorReasonDTO;
 import umc.heerang.umc5thstudy.base.code.status.ErrorStatus;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.ConstraintViolationException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -23,6 +24,15 @@ import java.util.Optional;
 @Slf4j
 @RestControllerAdvice(annotations = {RestController.class})
 public class ExceptionAdvice extends ResponseEntityExceptionHandler {
+    @org.springframework.web.bind.annotation.ExceptionHandler
+    public ResponseEntity<Object> validation(ConstraintViolationException e, WebRequest request) {
+        String errorMessage = e.getConstraintViolations().stream()
+                .map(constraintViolation -> constraintViolation.getMessage())
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("ConstraintViolationException 추출 도중 에러 발생"));
+
+        return handleExceptionInternalConstraint(e, ErrorStatus.valueOf(errorMessage), HttpHeaders.EMPTY,request);
+    }
     @Override
     public ResponseEntity<Object> handleMethodArgumentNotValid(
             MethodArgumentNotValidException e, HttpHeaders headers, HttpStatus status, WebRequest request) {
@@ -91,5 +101,15 @@ public class ExceptionAdvice extends ResponseEntityExceptionHandler {
                 request
         );
     }
-
+    private ResponseEntity<Object> handleExceptionInternalConstraint(Exception e, ErrorStatus errorCommonStatus,
+                                                                     HttpHeaders headers, WebRequest request) {
+        ApiResponse<Object> body = ApiResponse.onFailure(errorCommonStatus.getCode(), errorCommonStatus.getMessage(), null);
+        return super.handleExceptionInternal(
+                e,
+                body,
+                headers,
+                errorCommonStatus.getHttpStatus(),
+                request
+        );
+    }
 }

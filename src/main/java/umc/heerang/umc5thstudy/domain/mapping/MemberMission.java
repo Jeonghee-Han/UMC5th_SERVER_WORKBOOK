@@ -1,6 +1,7 @@
 package umc.heerang.umc5thstudy.domain.mapping;
 
 import lombok.*;
+import umc.heerang.umc5thstudy.domain.FoodCategory;
 import umc.heerang.umc5thstudy.domain.Mission;
 import umc.heerang.umc5thstudy.domain.Member;
 import umc.heerang.umc5thstudy.domain.common.BaseEntity;
