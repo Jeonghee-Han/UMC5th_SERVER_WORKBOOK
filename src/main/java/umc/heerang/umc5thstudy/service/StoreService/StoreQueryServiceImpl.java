@@ -10,7 +10,6 @@ import umc.heerang.umc5thstudy.domain.Store;
 import umc.heerang.umc5thstudy.repository.ReviewRepository;
 import umc.heerang.umc5thstudy.repository.StoreRepository;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service
